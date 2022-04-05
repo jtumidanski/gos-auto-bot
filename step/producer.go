@@ -12,11 +12,11 @@ func CreateImperialCarnivalHelpSteps(l logrus.FieldLogger) Producer {
 	return func() []Step {
 		steps := createLaunchSteps(l)
 		steps = append(steps,
-			ClickStep(coordinate.NewScaled(500, 435), 750),
-			ClickStep(coordinate.NewScaled(275, 740), 750),
-			ClickStep(coordinate.NewScaled(455, 830), 750),
-			ClickStep(coordinate.NewScaled(383, 870), 750),
-			ClickStep(coordinate.NewScaled(430, 335), 750),
+			ClickStep(coordinate.NewScaled(500, 435), 1000),
+			ClickStep(coordinate.NewScaled(275, 740), 1000),
+			ClickStep(coordinate.NewScaled(455, 830), 1000),
+			ClickStep(coordinate.NewScaled(383, 870), 1000),
+			ClickStep(coordinate.NewScaled(430, 335), 1000),
 		)
 		return steps
 	}
@@ -279,7 +279,7 @@ func CreateLevySteps(l logrus.FieldLogger) func(vip int, levyTotal int) Producer
 					ClickStep(coordinate.NewScaled(30, 58), 500),
 					ClickStep(coordinate.NewScaled(422, 571), 500),
 				)
-				for i := 1; i < levyTotal; i++ {
+				for i := 0; i < levyTotal; i++ {
 					steps = append(steps, ClickStep(coordinate.NewScaled(375, 768), 750))
 				}
 				steps = append(steps,

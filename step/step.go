@@ -125,7 +125,7 @@ func VerifyPixelStep(l logrus.FieldLogger) func(c coordinate.Model, r uint8, g u
 func repeatFuncForImage(l logrus.FieldLogger) func(bot identity.Identity, dir string, repeatFunc repeatableImageFunc, reset Operator) {
 	return func(bot identity.Identity, dir string, repeatFunc repeatableImageFunc, reset Operator) {
 		attempt := 0
-		maxAttempt := 60
+		maxAttempt := 20
 		verified := false
 		for !verified {
 			takeScreenshot(bot.DeviceId())
@@ -141,7 +141,7 @@ func repeatFuncForImage(l logrus.FieldLogger) func(bot identity.Identity, dir st
 				if len(files) > 0 {
 					var newestTime int64 = 0
 					for _, f := range files {
-						fi, err := os.Stat(dir + f.Name())
+						fi, err := os.Stat(dir + "\\" + f.Name())
 						if err != nil {
 							l.WithError(err).Warnf("Unable to read statistics for file %s.", f.Name())
 							break
@@ -153,7 +153,7 @@ func repeatFuncForImage(l logrus.FieldLogger) func(bot identity.Identity, dir st
 						}
 					}
 
-					f, err := os.Open(dir + newestFile)
+					f, err := os.Open(dir + "\\" + newestFile)
 					if err != nil {
 						l.WithError(err).Warnf("Unable to open image %s.", newestFile)
 						_ = f.Close()
@@ -164,7 +164,7 @@ func repeatFuncForImage(l logrus.FieldLogger) func(bot identity.Identity, dir st
 					if err != nil {
 						l.WithError(err).Warnf("Unable to decode image %s.", newestFile)
 						_ = f.Close()
-						_ = os.Remove(dir + newestFile)
+						_ = os.Remove(dir + "\\" + newestFile)
 						continue
 					}
 
@@ -175,7 +175,7 @@ func repeatFuncForImage(l logrus.FieldLogger) func(bot identity.Identity, dir st
 						l.WithError(err).Errorf("Unable to close image %s.", newestFile)
 						continue
 					}
-					err = os.Remove(dir + newestFile)
+					err = os.Remove(dir + "\\" + newestFile)
 					if err != nil {
 						l.WithError(err).Errorf("Unable to delete image %s.", newestFile)
 						continue
@@ -323,7 +323,7 @@ func killAndRestartEmulator(l logrus.FieldLogger) func(bot identity.Identity) {
 			if err != nil {
 				continue
 			}
-			if strings.Contains(cmd, bot.DeviceId()) {
+			if strings.Contains(cmd, bot.NoxId()) || (bot.NoxId() == "Nox_0" && strings.Contains(cmd, "comment nox")) {
 				println(p.Pid)
 				_ = p.Kill()
 			}
