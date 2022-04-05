@@ -104,10 +104,27 @@ func CreateDivinationSteps(l logrus.FieldLogger) Producer {
 	return func() []Step {
 		steps := createLaunchSteps(l)
 		steps = append(steps,
-			GestureStep(400, 820, 240, 820, 750, 2000),
-			ClickStep(coordinate.NewScaled(215, 568), 500),
+			GestureStep(400, 820, 240, 820, 750, 2000),     // gesture right
+			ClickStep(coordinate.NewScaled(215, 568), 500), // click divination window
+
+			// handle divination
 			ClickStep(coordinate.NewScaled(270, 618), 500),
 			ClickStep(coordinate.NewScaled(270, 618), 500),
+
+			// loop through 3, 7, 14, and 21 day bonus rewards
+			ClickColorStep(l)(coordinate.NewScaled(88, 746), coordinate.NewScaled(120, 750), RedMatcher(), 500),
+			ClickStep(coordinate.NewScaled(535, 235), 500),
+
+			ClickColorStep(l)(coordinate.NewScaled(170, 746), coordinate.NewScaled(200, 750), RedMatcher(), 500),
+			ClickStep(coordinate.NewScaled(535, 235), 500),
+
+			ClickColorStep(l)(coordinate.NewScaled(305, 746), coordinate.NewScaled(345, 750), RedMatcher(), 500),
+			ClickStep(coordinate.NewScaled(535, 235), 500),
+
+			ClickColorStep(l)(coordinate.NewScaled(450, 746), coordinate.NewScaled(480, 750), RedMatcher(), 500),
+			ClickStep(coordinate.NewScaled(535, 235), 500),
+
+			// back out
 			ClickStep(coordinate.NewScaled(30, 58), 500),
 		)
 		return steps
