@@ -10,8 +10,7 @@ type Settings struct {
 	Startup struct {
 		Duration int `json:"duration"`
 	} `json:"startup"`
-	AdsOffset int `json:"ads_offset"`
-	Scripts   struct {
+	Scripts struct {
 		Levy         Setting `json:"levy"`
 		Divination   Setting `json:"divination"`
 		Council      Setting `json:"council"`
@@ -55,35 +54,4 @@ func ReadSettings(l logrus.FieldLogger) (*Settings, error) {
 		return nil, err
 	}
 	return ms, nil
-}
-
-func WriteAdOffset(l logrus.FieldLogger) func(value int) error {
-	macroSettings, ok := os.LookupEnv("MACRO_SETTINGS")
-	if !ok {
-		l.Fatalf("Unable to lookup MACRO_SETTINGS")
-	}
-
-	return func(value int) error {
-		s, err := ReadSettings(l)
-		if err != nil {
-			l.WithError(err).Errorf("Error opening the settings file for updating.")
-			return err
-		}
-		s.AdsOffset = value
-
-		f, err := os.Create(macroSettings)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to open macro settings.")
-			return err
-		}
-		defer f.Close()
-
-		e := json.NewEncoder(f)
-		err = e.Encode(s)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to write macro settings.")
-			return err
-		}
-		return nil
-	}
 }

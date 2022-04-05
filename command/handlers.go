@@ -5,21 +5,18 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/sirupsen/logrus"
 	"gos-auto-bot/bot"
-	"gos-auto-bot/macro"
 	"gos-auto-bot/orchestrator"
 	"gos-auto-bot/task"
 	"regexp"
-	"strconv"
 )
 
 const (
-	PingCommand        = "!ping"
-	TidyCommand        = "!tidy"
-	HelpCommand        = "!help"
-	ScheduleCommand    = "!schedule"
-	CommandsCommand    = "!commands"
-	SetAdOffsetCommand = "!adoffset"
-	Help               = "!help"
+	PingCommand     = "!ping"
+	TidyCommand     = "!tidy"
+	HelpCommand     = "!help"
+	ScheduleCommand = "!schedule"
+	CommandsCommand = "!commands"
+	Help            = "!help"
 
 	ModeratorRole = "Moderator"
 )
@@ -176,36 +173,4 @@ func parseSchedule(message string) (string, string) {
 	re := regexp.MustCompile("<(.*)> !schedule ([a-zA-Z 0-9]*)* ([a-zA-Z]*)")
 	match := re.FindStringSubmatch(message)
 	return match[2], match[3]
-}
-
-func SetAdOffsetHandler(l logrus.FieldLogger, guildId string, channelId string) Handler {
-	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		if !isRole(l)(s, guildId, ModeratorRole, m.Member.Roles) {
-			l.Debugf("Unauthorized user %s trying to execute privileged command.", m.Author.Username)
-			return
-		}
-		value := parseOffset(m.Message.Content)
-
-		err := macro.WriteAdOffset(l)(value)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to update ad offset.")
-			return
-		}
-
-		_, err = s.ChannelMessageSend(channelId, fmt.Sprintf("Updating ad offset to %d at the request of <@%s>.", value, m.Author.ID))
-		if err != nil {
-			l.WithError(err).Errorf("Unable to send %s response.", ScheduleCommand)
-		}
-	}
-}
-
-func parseOffset(message string) int {
-	re := regexp.MustCompile("<(.*)> !adoffset ([0-9]*)")
-	match := re.FindStringSubmatch(message)
-
-	value, err := strconv.Atoi(match[2])
-	if err != nil {
-		return 0
-	}
-	return value
 }

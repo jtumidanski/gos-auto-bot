@@ -84,7 +84,7 @@ func addInstruction(l logrus.FieldLogger) func(ms *macro.Settings, name string, 
 		case task.AcademyTask:
 			t = taskCreator(task.AcademyTask, step.CreateAcademySteps(l)(bs.AcademySeats))
 		case task.AdTask:
-			t = taskCreator(task.AdTask, step.CreateAdSteps(l)(ms.AdsOffset, bs.Novice, bs.SevenDays))
+			t = taskCreator(task.AdTask, step.CreateAdSteps(l))
 		case task.CoalitionTask:
 			t = taskCreator(task.CoalitionTask, step.CreateCoalitionSteps(l))
 		case task.CouncilTask:
@@ -141,7 +141,7 @@ func orchestratorStep(l logrus.FieldLogger) func(ms *macro.Settings, names []str
 				tasks = append(tasks, taskCreator(task.AcademyTask, step.CreateAcademySteps(l)(bs.AcademySeats)))
 			}
 			if canExecute(task.AdTask, ms.Scripts.Ads.Enabled, ms.Scripts.Ads.Times, db.Ads, bs.Scripts.Ads.Enabled, 0, 0) {
-				tasks = append(tasks, taskCreator(task.AdTask, step.CreateAdSteps(l)(ms.AdsOffset, bs.Novice, bs.SevenDays)))
+				tasks = append(tasks, taskCreator(task.AdTask, step.CreateAdSteps(l)))
 			}
 			if canExecute(task.CoalitionTask, ms.Scripts.Coalition.Enabled, ms.Scripts.Coalition.Times, db.Coalition, bs.Scripts.Coalition.Enabled, 0, 0) {
 				tasks = append(tasks, taskCreator(task.CoalitionTask, step.CreateCoalitionSteps(l)))

@@ -51,8 +51,7 @@ func NewWorker(fl logrus.FieldLogger) func(ctx context.Context, wg *sync.WaitGro
 		commandMap[command.TidyCommand] = command.TidyHandler(l, guildId, channel)
 		commandMap[command.HelpCommand] = command.HelpHandler(l, ownerId, instructions)
 		commandMap[command.ScheduleCommand] = command.ScheduleHandler(l, guildId, channel, instructions)
-		commandMap[command.SetAdOffsetCommand] = command.SetAdOffsetHandler(l, guildId, channel)
-		commandMap[command.CommandsCommand] = command.CommandsHandler(l, []string{command.PingCommand, command.TidyCommand, command.HelpCommand, command.ScheduleCommand, command.SetAdOffsetCommand})
+		commandMap[command.CommandsCommand] = command.CommandsHandler(l, []string{command.PingCommand, command.TidyCommand, command.HelpCommand, command.ScheduleCommand})
 
 		dg.AddHandler(messageCreate(l)(username, commandMap))
 

@@ -193,33 +193,40 @@ func CreateCoalitionSteps(l logrus.FieldLogger) Producer {
 	}
 }
 
-func CreateAdSteps(l logrus.FieldLogger) func(adsOffset int, novice bool, sevenDays bool) Producer {
-	return func(adsOffset int, novice bool, sevenDays bool) Producer {
-		return func() []Step {
-			steps := createLaunchSteps(l)
-			base := 179
-			offset := 72
-			index := adsOffset - 1
-			if novice {
-				index += 1
-			}
-			if sevenDays {
-				index += 1
-			}
-			y := base + (index * offset)
-			steps = append(steps, ClickStep(coordinate.NewScaled(40, y), 5000))
+func CreateAdSteps(l logrus.FieldLogger) Producer {
+	return func() []Step {
+		steps := createLaunchSteps(l)
+		steps = append(steps, WaitStep(10000))
 
-			for i := 1; i < 5; i++ {
-				steps = append(steps,
-					ClickStep(coordinate.NewScaled(277, 660), 35000),
-					BackStep(1000),
-					ClickStep(coordinate.NewScaled(277, 660), 5000),
-					ClickStep(coordinate.NewScaled(277, 256), 500),
-				)
-			}
-			steps = append(steps, ClickStep(coordinate.NewScaled(514, 264), 500))
-			return steps
+		// find "videos" button by looking at indexes decreasingly, to find the one with a red dot.
+		base := 179
+		offset := 72
+		x := 40
+		for i := 7; i >= 0; i-- {
+			y := base + (i * offset)
+			steps = append(steps, ClickColorStep(l)(coordinate.NewScaled(x, y-(offset/2)), coordinate.NewScaled(x+40, y-(offset/2)+30), RedMatcher(), 500))
 		}
+
+		// verify "watch videos" is blue, and click
+		steps = append(steps, VerifyPixelStep(l)(coordinate.NewScaled(235, 655), 61, 157, 169, nil, click(235, 655)))
+		steps = append(steps, ClickStep(coordinate.NewScaled(235, 655), 0))
+
+		// if personal advertising statement warning. click confirm
+		steps = append(steps, ClickColorStep(l)(coordinate.NewScaled(460, 455), coordinate.NewScaled(490, 490), FixedMatcher(30, 25, 10), 500))
+		steps = append(steps, ClickColorStep(l)(coordinate.NewScaled(200, 585), coordinate.NewScaled(335, 630), FixedMatcher(66, 187, 205), 500))
+
+		// loop through "watching" videos
+		for i := 1; i < 5; i++ {
+			steps = append(steps,
+				WaitStep(35000),
+				BackStep(1000),
+				ClickStep(coordinate.NewScaled(277, 660), 5000),
+				ClickStep(coordinate.NewScaled(277, 256), 500),
+				ClickStep(coordinate.NewScaled(277, 660), 500),
+			)
+		}
+		steps = append(steps, ClickStep(coordinate.NewScaled(514, 264), 500))
+		return steps
 	}
 }
 

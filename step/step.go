@@ -56,6 +56,13 @@ func back(bot identity.Identity) {
 	simpleGet(fmt.Sprintf(BackUrl, bot.DeviceId()))
 }
 
+func WaitStep(delay int) Step {
+	return Step{
+		StepFunc: func(_ identity.Identity) {},
+		Delay:    delay,
+	}
+}
+
 func ClickStep(c coordinate.Model, delay int) Step {
 	return Step{
 		StepFunc: click(c.X(), c.Y()),
@@ -204,7 +211,9 @@ func imageVerification(bot identity.Identity, x int, y int, r uint8, g uint8, b 
 		if r == nrgb.R && g == nrgb.G && b == nrgb.B {
 			return false
 		} else {
-			recoveryFunc(bot)
+			if recoveryFunc != nil {
+				recoveryFunc(bot)
+			}
 			return true
 		}
 	}
@@ -248,6 +257,27 @@ func ClickColorStep(l logrus.FieldLogger) func(start coordinate.Model, end coord
 }
 
 type ColorMatcher func(r uint8, g uint8, b uint8) bool
+
+func FixedMatcher(ir uint8, ig uint8, ib uint8) ColorMatcher {
+	return func(r uint8, g uint8, b uint8) bool {
+		return r == ir && g == ig && b == ib
+	}
+}
+
+func RedMatcher() ColorMatcher {
+	return func(r uint8, g uint8, b uint8) bool {
+		if uint16(r) > 100 && uint16(r) > uint16(g)*2 && uint16(r) > uint16(b)*2 {
+			return true
+		}
+		if uint16(g) > 100 && uint16(g) > uint16(r)*2 && uint16(g) > uint16(b)*2 {
+			return false
+		}
+		if uint16(b) > 100 && uint16(b) > uint16(g)*2 && uint16(b) > uint16(r)*2 {
+			return false
+		}
+		return false
+	}
+}
 
 func GreenMatcher() ColorMatcher {
 	return func(r uint8, g uint8, b uint8) bool {
