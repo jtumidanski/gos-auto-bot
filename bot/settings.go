@@ -11,8 +11,6 @@ type Settings struct {
 	NoxId        string `json:"noxId"`
 	Name         string `json:"name"`
 	DeviceId     string `json:"deviceId"`
-	Novice       bool   `json:"novice"`
-	SevenDays    bool   `json:"7days"`
 	VIP          int    `json:"vip"`
 	AcademySeats int    `json:"academy_seats"`
 	Envoys       int    `json:"envoys"`
