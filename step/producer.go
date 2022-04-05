@@ -314,14 +314,16 @@ func CreateLevySteps(l logrus.FieldLogger) func(vip int, levyTotal int) Producer
 			} else {
 				steps = append(steps,
 					ClickStep(coordinate.NewScaled(220, 228), 500),
-					ClickStep(coordinate.NewScaled(94, 571), 500),
-					ClickStep(coordinate.NewScaled(265, 918), 500),
-					ClickStep(coordinate.NewScaled(30, 58), 500),
-					ClickStep(coordinate.NewScaled(422, 571), 500),
-					ClickStep(coordinate.NewScaled(375, 768), 500),
-					ClickStep(coordinate.NewScaled(30, 58), 500),
-					ClickStep(coordinate.NewScaled(30, 58), 500),
-					ClickStep(coordinate.NewScaled(30, 58), 500),
+					ClickStep(coordinate.NewScaled(94, 571), 500),                                                                       // levies
+					ClickStep(coordinate.NewScaled(265, 918), 500),                                                                      // levy all
+					ClickStep(coordinate.NewScaled(30, 58), 500),                                                                        // back
+					ClickStep(coordinate.NewScaled(422, 571), 500),                                                                      // imperial affairs
+					ClickColorStep(l)(coordinate.NewScaled(399, 941), coordinate.NewScaled(401, 944), FixedMatcher(30, 25, 10), 500),    // ensure handle all
+					ClickColorStep(l)(coordinate.NewScaled(222, 494), coordinate.NewScaled(234, 503), FixedMatcher(140, 242, 239), 500), // confirm handle all
+					ClickStep(coordinate.NewScaled(375, 768), 500),                                                                      // click resources
+					ClickStep(coordinate.NewScaled(30, 58), 500),                                                                        // back
+					ClickStep(coordinate.NewScaled(30, 58), 500),                                                                        // back
+					ClickStep(coordinate.NewScaled(30, 58), 500),                                                                        // back
 				)
 			}
 			return steps
