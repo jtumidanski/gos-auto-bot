@@ -174,8 +174,11 @@ func CreateCouncilSteps(l logrus.FieldLogger) func(vip int, envoys int) Producer
 				)
 			} else {
 				steps = append(steps,
-					GestureStep(400, 820, 240, 820, 750, 2000),
-					ClickStep(coordinate.NewScaled(247, 376), 500),
+					GestureStep(400, 820, 240, 820, 750, 2000),     // gesture right
+					ClickStep(coordinate.NewScaled(247, 376), 500), // click council
+
+					ClickColorStep(l)(coordinate.NewScaled(229, 614), coordinate.NewScaled(231, 616), FixedMatcher(30, 25, 10), 500), // ensure handle all
+
 					ClickStep(coordinate.NewScaled(260, 668), 500),
 					ClickStep(coordinate.NewScaled(260, 308), 500),
 					ClickStep(coordinate.NewScaled(275, 918), 500),
